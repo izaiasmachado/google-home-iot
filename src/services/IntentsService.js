@@ -52,6 +52,26 @@ async function sync() {
           queryOnlyHumiditySetting: true,
         },
       },
+      {
+        id: "node-relay",
+        type: "action.devices.types.DOOR",
+        traits: ["action.devices.traits.LockUnlock"],
+        name: {
+          defaultNames: ["Door"],
+          name: "Door",
+          nicknames: ["Door"],
+        },
+        deviceInfo: {
+          manufacturer: "Acme Co",
+          model: "acme-washer",
+          hwVersion: "1.0",
+          swVersion: "1.0.1",
+        },
+        willReportState: true,
+        attributes: {
+          discreteOnlyLockUnlock: true,
+        },
+      },
     ],
   };
 }

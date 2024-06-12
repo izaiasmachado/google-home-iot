@@ -1,24 +1,31 @@
 const TelemetryService = require("./TelemetryService");
 
 async function query(deviceId) {
+  const state = await getDeviceState(deviceId);
+
+  return {
+    online: true,
+    ...state,
+  };
+}
+
+async function getDeviceState(deviceId) {
   switch (deviceId) {
     case "node-dht-temperature":
       return await getTemperatureSensorData();
     case "node-dht-humidity":
       return await getHumiditySensorData();
+    case "node-relay":
+      return await getDoorState();
   }
-}
-
-function isDeviceOnline(lastUpdate) {
-  return new Date() - lastUpdate < 5 * 60 * 1000;
 }
 
 async function getTemperatureSensorData() {
   const sensorData = await TelemetryService.getSensorData();
   const temperatureAmbientCelsius = sensorData.temperature;
-  const online = isDeviceOnline(sensorData.createdAt);
+
   return {
-    online,
+    online: true,
     temperatureAmbientCelsius,
   };
 }
@@ -26,11 +33,17 @@ async function getTemperatureSensorData() {
 async function getHumiditySensorData() {
   const sensorData = await TelemetryService.getSensorData();
   const humidityAmbientPercent = sensorData.humidity;
-  const online = isDeviceOnline(sensorData.createdAt);
 
   return {
-    online,
+    online: true,
     humidityAmbientPercent,
+  };
+}
+
+async function getDoorState() {
+  return {
+    online: true,
+    isLocked: false,
   };
 }
 
