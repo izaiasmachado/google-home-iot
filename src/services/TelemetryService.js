@@ -2,7 +2,12 @@ const axios = require("axios");
 
 let sensorMeasurements;
 
-const getLatestSensorData = async () => {
+const mockSensorData = {
+  temperature: 25,
+  humidity: 50,
+};
+
+const getTelemetryData = async () => {
   const response = await axios.get(
     "https://azr-iot-data-consumption.azurewebsites.net/api/most_recent_consumption"
   );
@@ -18,6 +23,15 @@ const getLatestSensorData = async () => {
     timestamp,
     ...response.data.mostRecentData.Body,
   };
+};
+
+const getLatestSensorData = async () => {
+  try {
+    const sensorData = await getTelemetryData();
+    return sensorData;
+  } catch (error) {
+    return mockSensorData;
+  }
 };
 
 const getNextMeasurementTime = (lastMeasurement) => {
