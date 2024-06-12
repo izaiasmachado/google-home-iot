@@ -1,10 +1,11 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:us-east-1:386907999633:task-definition/iot-ufc-task:1",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:386907999633:task-definition/run-google-home-integration:1",
   "containerDefinitions": [
     {
       "name": "google-home-integration",
-      "image": "arn:aws:ecr:us-east-1:386907999633:repository/iot-ufc:latest",
+      "image": "386907999633.dkr.ecr.us-east-1.amazonaws.com/google-home-integration:latest",
       "cpu": 0,
+      "memory": 1536,
       "portMappings": [
         {
           "name": "google-home-integration-3000-tcp",
@@ -19,16 +20,23 @@
       "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
+      "ulimits": [],
       "systemControls": []
     }
   ],
-  "family": "iot-ufc-task",
+  "family": "run-google-home-integration",
   "executionRoleArn": "arn:aws:iam::386907999633:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
   "revision": 1,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
+    {
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
     {
       "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
     },
@@ -45,7 +53,7 @@
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2024-06-12T02:33:27.357Z",
+  "registeredAt": "2024-06-12T09:30:08.059Z",
   "registeredBy": "arn:aws:iam::386907999633:root",
   "tags": []
 }

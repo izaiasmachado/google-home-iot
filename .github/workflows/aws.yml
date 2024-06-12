@@ -28,11 +28,11 @@ name: Deploy to Amazon ECS
 
 on:
   push:
-    # branches: ["main"]
+    branches: ["main"]
 
 env:
   AWS_REGION: "us-west-1"
-  ECR_REPOSITORY: "iot-ufc"
+  ECR_REPOSITORY: "google-home-integration"
   ECS_SERVICE: "run-google-home-integration"
   ECS_CLUSTER: "iot-ufc-cluster"
   ECS_TASK_DEFINITION: ".github/workflows/taskDefinition.json"
@@ -62,18 +62,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      # - name: Build, tag, and push image to Amazon ECR
-      #   id: build-image
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     IMAGE_TAG: ${{ github.sha }}
-      #   run: |
-      #     # Build a docker container and
-      #     # push it to ECR so that it can
-      #     # be deployed to ECS.
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-      #     echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
