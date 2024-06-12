@@ -6,7 +6,12 @@ const getLatestSensorData = async () => {
   const response = await axios.get(
     "https://azr-iot-data-consumption.azurewebsites.net/api/most_recent_consumption"
   );
-  return response.data.mostRecentData.Body;
+  const createdAt = new Date(response.data.mostRecentData.EnqueuedTimeUtc);
+
+  return {
+    createdAt,
+    ...response.data.mostRecentData.Body,
+  };
 };
 
 const getSensorData = async () => {

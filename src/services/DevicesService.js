@@ -1,4 +1,4 @@
-const SensorsService = require("./SensorsService");
+const TelemetryService = require("./TelemetryService");
 
 async function query(deviceId) {
   switch (deviceId) {
@@ -9,21 +9,27 @@ async function query(deviceId) {
   }
 }
 
-async function getTemperatureSensorData() {
-  const temperatureAmbientCelsius = await SensorsService.getTemperature();
+function isDeviceOnline(lastUpdate) {
+  return new Date() - lastUpdate < 5 * 60 * 1000;
+}
 
+async function getTemperatureSensorData() {
+  const sensorData = await TelemetryService.getSensorData();
+  const temperatureAmbientCelsius = sensorData.temperature;
+  const online = isDeviceOnline(sensorData.createdAt);
   return {
-    on: true,
-    online: true,
+    online,
     temperatureAmbientCelsius,
   };
 }
 
 async function getHumiditySensorData() {
-  const humidityAmbientPercent = await SensorsService.getHumidity();
+  const sensorData = await TelemetryService.getSensorData();
+  const humidityAmbientPercent = sensorData.humidity;
+  const online = isDeviceOnline(sensorData.createdAt);
+
   return {
-    on: true,
-    online: true,
+    online,
     humidityAmbientPercent,
   };
 }
