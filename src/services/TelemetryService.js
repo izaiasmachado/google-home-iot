@@ -57,16 +57,31 @@ const getSensorData = async () => {
 };
 
 let isDoorLocked = false;
+let isLightOn = false;
 
 const getDoorState = async () => {
-  console.log("Getting door state");
   return isDoorLocked;
 };
 
+const getLightState = async () => {
+  return isLightOn;
+};
+
+async function sendRelayState() {
+  const lockStateBinary = isDoorLocked ? "0" : "1";
+  const lightStateBinary = isLightOn ? "0" : "1";
+  const payload = `${lockStateBinary}${lightStateBinary}`;
+  await AzureIoT.sendMessage("relay", payload);
+}
+
 const changeDoorState = async (newState) => {
   isDoorLocked = newState;
-  const lockState = newState ? "0" : "1";
-  await AzureIoT.sendMessage("relay", `${lockState}0`);
+  await sendRelayState();
+};
+
+const changeLightState = async (newState) => {
+  isLightOn = newState;
+  await sendRelayState();
 };
 
 module.exports = {
@@ -74,4 +89,6 @@ module.exports = {
   getSensorData,
   getDoorState,
   changeDoorState,
+  getLightState,
+  changeLightState,
 };

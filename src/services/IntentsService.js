@@ -53,7 +53,7 @@ async function sync() {
         },
       },
       {
-        id: "relay",
+        id: "node-relay-door",
         type: "action.devices.types.DOOR",
         traits: ["action.devices.traits.LockUnlock"],
         name: {
@@ -70,6 +70,27 @@ async function sync() {
         willReportState: true,
         attributes: {
           discreteOnlyLockUnlock: true,
+        },
+      },
+      {
+        id: "node-relay-light",
+        type: "action.devices.types.SWITCH",
+        traits: ["action.devices.traits.OnOff"],
+        name: {
+          defaultNames: ["Light"],
+          name: "Light",
+          nicknames: ["Light"],
+        },
+        deviceInfo: {
+          manufacturer: "Acme Co",
+          model: "acme-washer",
+          hwVersion: "1.0",
+          swVersion: "1.0.1",
+        },
+        willReportState: true,
+        attributes: {
+          commandOnlyOnOff: false,
+          queryOnlyOnOff: false,
         },
       },
     ],

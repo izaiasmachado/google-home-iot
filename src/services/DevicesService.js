@@ -15,8 +15,10 @@ async function getDeviceState(deviceId) {
       return await getTemperatureSensorData();
     case "node-dht-humidity":
       return await getHumiditySensorData();
-    case "relay":
+    case "node-relay-door":
       return await getDoorState();
+    case "node-relay-light":
+      return await getLightState();
   }
 }
 
@@ -47,12 +49,21 @@ async function getDoorState() {
   };
 }
 
+async function getLightState() {
+  return {
+    online: true,
+    on: await TelemetryService.getLightState(),
+  };
+}
+
 async function execute(device, execution) {
   const deviceId = device.id;
 
   switch (deviceId) {
-    case "relay":
-      return await executeRelayCommand(device, execution);
+    case "node-relay-door":
+      return await executeCommand(device, execution);
+    case "node-relay-light":
+      return await executeCommand(device, execution);
     default:
       return {
         ids: [deviceId],
@@ -62,7 +73,7 @@ async function execute(device, execution) {
   }
 }
 
-async function executeRelayCommand(device, execution) {
+async function executeCommand(device, execution) {
   const actualExecution = execution[0];
   const command = actualExecution.command;
   const params = actualExecution.params;
@@ -73,6 +84,12 @@ async function executeRelayCommand(device, execution) {
         ids: [device.id],
         status: "SUCCESS",
         lock: await changeDoorState(params.lock),
+      };
+    case "action.devices.commands.OnOff":
+      return {
+        ids: [device.id],
+        status: "SUCCESS",
+        on: await changeLightState(params.on),
       };
     default:
       return {
@@ -90,6 +107,16 @@ async function changeDoorState(state) {
   return {
     online: true,
     isLocked,
+  };
+}
+
+async function changeLightState(state) {
+  await TelemetryService.changeLightState(state);
+  const on = await TelemetryService.getLightState();
+
+  return {
+    online: true,
+    on,
   };
 }
 
