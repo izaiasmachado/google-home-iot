@@ -1,4 +1,5 @@
 const axios = require("axios");
+const AzureIoT = require("./AzureIoT");
 
 let sensorMeasurements;
 
@@ -30,6 +31,7 @@ const getLatestSensorData = async () => {
     const sensorData = await getTelemetryData();
     return sensorData;
   } catch (error) {
+    console.error("Failed to get sensor data", error);
     return mockSensorData;
   }
 };
@@ -54,4 +56,22 @@ const getSensorData = async () => {
   return sensorMeasurements;
 };
 
-module.exports = { getLatestSensorData, getSensorData };
+let isDoorLocked = false;
+
+const getDoorState = async () => {
+  console.log("Getting door state");
+  return isDoorLocked;
+};
+
+const changeDoorState = async (newState) => {
+  isDoorLocked = newState;
+  const lockState = newState ? "0" : "1";
+  await AzureIoT.sendMessage("relay", `${lockState}0`);
+};
+
+module.exports = {
+  getLatestSensorData,
+  getSensorData,
+  getDoorState,
+  changeDoorState,
+};

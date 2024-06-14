@@ -53,7 +53,7 @@ async function sync() {
         },
       },
       {
-        id: "node-relay",
+        id: "relay",
         type: "action.devices.types.DOOR",
         traits: ["action.devices.traits.LockUnlock"],
         name: {
@@ -92,4 +92,23 @@ async function query(input) {
   };
 }
 
-module.exports = { sync, query };
+async function execute(input) {
+  const command = input.payload.commands[0];
+  const commandResults = await executeCommand(command);
+
+  return {
+    commands: commandResults,
+  };
+}
+
+async function executeCommand(command) {
+  const { devices, execution } = command;
+
+  const devicesPromises = devices.map((device) => {
+    return DevicesService.execute(device, execution);
+  });
+
+  return await Promise.all(devicesPromises);
+}
+
+module.exports = { sync, query, execute };
