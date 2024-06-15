@@ -34,9 +34,11 @@ class AzureIoTClient {
       this.client.send(deviceId, message, (err) => {
         if (err) {
           logger.error(`Failed to send message to ${deviceId}`, err);
-          return reject(err);
+          // return reject(err);
+        } else {
+          logger.info(`Message sent to ${deviceId}`);
         }
-        logger.info(`Message sent to ${deviceId}`);
+
         resolve();
       });
     });

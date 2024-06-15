@@ -1,5 +1,6 @@
 const axios = require("axios");
 const AzureIoT = require("./AzureIoT");
+const logger = require("../utils/logger");
 
 let sensorMeasurements;
 
@@ -56,7 +57,7 @@ const getSensorData = async () => {
   return sensorMeasurements;
 };
 
-let isDoorLocked = false;
+let isDoorLocked = true;
 let isLightOn = false;
 
 const getDoorState = async () => {
@@ -67,21 +68,29 @@ const getLightState = async () => {
   return isLightOn;
 };
 
-async function sendRelayState() {
-  const lockStateBinary = isDoorLocked ? "0" : "1";
-  const lightStateBinary = isLightOn ? "0" : "1";
-  const payload = `${lockStateBinary}${lightStateBinary}`;
+async function sendDoorState() {
+  const payload = isDoorLocked ? "1X" : "0X";
   await AzureIoT.sendMessage("relay", payload);
+}
+
+async function sendLightState() {
+  const payload = isLightOn ? "X0" : "X1";
+  await AzureIoT.sendMessage("relay", payload);
+}
+
+async function openDoorTemporarily() {
+  console.log("Opening door");
+  await AzureIoT.sendMessage("relay", "2X");
 }
 
 const changeDoorState = async (newState) => {
   isDoorLocked = newState;
-  await sendRelayState();
+  await sendDoorState();
 };
 
 const changeLightState = async (newState) => {
   isLightOn = newState;
-  await sendRelayState();
+  await sendLightState();
 };
 
 module.exports = {
@@ -91,4 +100,5 @@ module.exports = {
   changeDoorState,
   getLightState,
   changeLightState,
+  openDoorTemporarily,
 };

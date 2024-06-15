@@ -64,6 +64,8 @@ async function execute(device, execution) {
       return await executeCommand(device, execution);
     case "node-relay-light":
       return await executeCommand(device, execution);
+    case "node-doorbell":
+      return await executeCommand(device, execution);
     default:
       return {
         ids: [deviceId],

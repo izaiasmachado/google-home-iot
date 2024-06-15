@@ -93,6 +93,23 @@ async function sync() {
           queryOnlyOnOff: false,
         },
       },
+      {
+        id: "node-doorbell",
+        type: "action.devices.types.DOORBELL",
+        traits: ["action.devices.traits.ObjectDetection"],
+        name: {
+          defaultNames: ["Doorbell"],
+          name: "Doorbell",
+          nicknames: ["Doorbell"],
+        },
+        deviceInfo: {
+          manufacturer: "Acme Co",
+          model: "acme-washer",
+          hwVersion: "1.0",
+          swVersion: "1.0.1",
+        },
+        willReportState: true,
+      },
     ],
   };
 }
