@@ -32,4 +32,9 @@ jobs:
           chmod 400 private_key
 
       - name: Deploy to Azure VM and run Docker
-        run: ssh -o StrictHostKeyChecking=no -i private_key ${{ vars.AWS_VM_USER }}@${{ vars.AWS_VM_IP }} 'sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/google-home-iot || true && sudo docker stop google-home-iot || true && sudo docker rm google-home-iot || true && sudo docker run --log-opt labels=applications,environment --restart unless-stopped --name google-home-iot -e AZURE_IOT_HUB_CONNECTION_STRING=${{ secrets.AZURE_IOT_HUB_CONNECTION_STRING }} -p 80:3000 -d ${{ secrets.DOCKERHUB_USERNAME }}/google-home-iot'
+        run: ssh -o StrictHostKeyChecking=no -i private_key ${{ vars.AWS_VM_USER }}@${{ vars.AWS_VM_IP }} << 'EOF'
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/google-home-iot || true
+          sudo docker stop google-home-iot || true
+          sudo docker rm google-home-iot || true
+          sudo docker run --log-opt labels=applications,environment --restart unless-stopped --name google-home-iot -e AZURE_IOT_HUB_CONNECTION_STRING=${{ secrets.AZURE_IOT_HUB_CONNECTION_STRING }} -p 80:3000 -d ${{ secrets.DOCKERHUB_USERNAME }}/google-home-iot
+        EOF
