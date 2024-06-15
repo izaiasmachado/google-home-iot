@@ -37,4 +37,4 @@ jobs:
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/google-home-iot || true && \
             sudo docker stop google-home-iot || true && \
             sudo docker rm google-home-iot || true && \
-            sudo docker run --log-opt labels=applications,environment --restart unless-stopped --name google-home-iot -e AZURE_IOT_HUB_CONNECTION_STRING=${{ secrets.AZURE_IOT_HUB_CONNECTION_STRING }} -p 80:3000 -d ${{ secrets.DOCKERHUB_USERNAME }}/google-home-iot"
+            sudo docker run --log-opt labels=applications,environment --restart unless-stopped --name google-home-iot -e AZURE_IOT_HUB_CONNECTION_STRING='${{ secrets.AZURE_IOT_HUB_CONNECTION_STRING }}' -d -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/google-home-iot"
