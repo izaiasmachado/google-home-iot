@@ -1,5 +1,3 @@
-const connectionString = process.env.AZURE_IOT_HUB_CONNECTION_STRING;
-
 const { Client } = require("azure-iothub");
 const { Message } = require("azure-iot-common");
 
@@ -44,4 +42,5 @@ class AzureIoTClient {
   }
 }
 
-module.exports = new AzureIoTClient(connectionString);
+const { AZURE_IOT_HUB_CONNECTION_STRING } = require("../utils/environment");
+module.exports = new AzureIoTClient(AZURE_IOT_HUB_CONNECTION_STRING);
