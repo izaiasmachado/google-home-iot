@@ -1,5 +1,4 @@
-const connectionString = process.env.AZURE_IOT_HUB_CONNECTION_STRING;
-
+const logger = require("../utils/logger");
 const { Client } = require("azure-iothub");
 const { Message } = require("azure-iot-common");
 
@@ -19,11 +18,11 @@ class AzureIoTClient {
     return new Promise((resolve, reject) => {
       this.client.open((err) => {
         if (err) {
-          console.log("Failed to open the connection to Azure IoT Hub");
+          logger.error("Failed to open the connection to Azure IoT Hub", err);
           return reject(err);
         }
 
-        console.log("Connection to Azure IoT Hub opened");
+        logger.info("Connection to Azure IoT Hub opened");
         resolve();
       });
     });
@@ -34,14 +33,15 @@ class AzureIoTClient {
       const message = new Message(rawMessage);
       this.client.send(deviceId, message, (err) => {
         if (err) {
-          console.log(`Failed to send message to ${deviceId}`);
+          logger.error(`Failed to send message to ${deviceId}`, err);
           return reject(err);
         }
-        console.log(`Message sent to ${deviceId}`);
+        logger.info(`Message sent to ${deviceId}`);
         resolve();
       });
     });
   }
 }
 
-module.exports = new AzureIoTClient(connectionString);
+const { AZURE_IOT_HUB_CONNECTION_STRING } = require("../utils/environment");
+module.exports = new AzureIoTClient(AZURE_IOT_HUB_CONNECTION_STRING);

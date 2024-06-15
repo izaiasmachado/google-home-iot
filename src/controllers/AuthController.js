@@ -8,7 +8,6 @@ async function redirectToLoginPage(req, res) {
     req.query.state
   );
 
-  console.log(`Set redirect to ${responsurl}`);
   return res.redirect(`/login?responseurl=${encodeURIComponent(responsurl)}`);
 }
 
