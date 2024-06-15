@@ -31,7 +31,7 @@ const getLatestSensorData = async () => {
     const sensorData = await getTelemetryData();
     return sensorData;
   } catch (error) {
-    console.error("Failed to get sensor data", error);
+    logger.error("Failed to get sensor data", error);
     return mockSensorData;
   }
 };
