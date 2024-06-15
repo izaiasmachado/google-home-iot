@@ -1,8 +1,14 @@
 const axios = require("axios");
+const AzureIoT = require("./AzureIoT");
 
 let sensorMeasurements;
 
-const getLatestSensorData = async () => {
+const mockSensorData = {
+  temperature: 25,
+  humidity: 50,
+};
+
+const getTelemetryData = async () => {
   const response = await axios.get(
     "https://azr-iot-data-consumption.azurewebsites.net/api/most_recent_consumption"
   );
@@ -18,6 +24,16 @@ const getLatestSensorData = async () => {
     timestamp,
     ...response.data.mostRecentData.Body,
   };
+};
+
+const getLatestSensorData = async () => {
+  try {
+    const sensorData = await getTelemetryData();
+    return sensorData;
+  } catch (error) {
+    console.error("Failed to get sensor data", error);
+    return mockSensorData;
+  }
 };
 
 const getNextMeasurementTime = (lastMeasurement) => {
@@ -40,4 +56,39 @@ const getSensorData = async () => {
   return sensorMeasurements;
 };
 
-module.exports = { getLatestSensorData, getSensorData };
+let isDoorLocked = false;
+let isLightOn = false;
+
+const getDoorState = async () => {
+  return isDoorLocked;
+};
+
+const getLightState = async () => {
+  return isLightOn;
+};
+
+async function sendRelayState() {
+  const lockStateBinary = isDoorLocked ? "0" : "1";
+  const lightStateBinary = isLightOn ? "0" : "1";
+  const payload = `${lockStateBinary}${lightStateBinary}`;
+  await AzureIoT.sendMessage("relay", payload);
+}
+
+const changeDoorState = async (newState) => {
+  isDoorLocked = newState;
+  await sendRelayState();
+};
+
+const changeLightState = async (newState) => {
+  isLightOn = newState;
+  await sendRelayState();
+};
+
+module.exports = {
+  getLatestSensorData,
+  getSensorData,
+  getDoorState,
+  changeDoorState,
+  getLightState,
+  changeLightState,
+};

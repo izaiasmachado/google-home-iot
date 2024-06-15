@@ -52,6 +52,47 @@ async function sync() {
           queryOnlyHumiditySetting: true,
         },
       },
+      {
+        id: "node-relay-door",
+        type: "action.devices.types.DOOR",
+        traits: ["action.devices.traits.LockUnlock"],
+        name: {
+          defaultNames: ["Door"],
+          name: "Door",
+          nicknames: ["Door"],
+        },
+        deviceInfo: {
+          manufacturer: "Acme Co",
+          model: "acme-washer",
+          hwVersion: "1.0",
+          swVersion: "1.0.1",
+        },
+        willReportState: true,
+        attributes: {
+          discreteOnlyLockUnlock: true,
+        },
+      },
+      {
+        id: "node-relay-light",
+        type: "action.devices.types.SWITCH",
+        traits: ["action.devices.traits.OnOff"],
+        name: {
+          defaultNames: ["Light"],
+          name: "Light",
+          nicknames: ["Light"],
+        },
+        deviceInfo: {
+          manufacturer: "Acme Co",
+          model: "acme-washer",
+          hwVersion: "1.0",
+          swVersion: "1.0.1",
+        },
+        willReportState: true,
+        attributes: {
+          commandOnlyOnOff: false,
+          queryOnlyOnOff: false,
+        },
+      },
     ],
   };
 }
@@ -72,4 +113,23 @@ async function query(input) {
   };
 }
 
-module.exports = { sync, query };
+async function execute(input) {
+  const command = input.payload.commands[0];
+  const commandResults = await executeCommand(command);
+
+  return {
+    commands: commandResults,
+  };
+}
+
+async function executeCommand(command) {
+  const { devices, execution } = command;
+
+  const devicesPromises = devices.map((device) => {
+    return DevicesService.execute(device, execution);
+  });
+
+  return await Promise.all(devicesPromises);
+}
+
+module.exports = { sync, query, execute };

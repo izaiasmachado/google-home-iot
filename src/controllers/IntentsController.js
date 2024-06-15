@@ -8,6 +8,8 @@ async function processInputs(input) {
       return IntentsService.sync(input);
     case "action.devices.QUERY":
       return IntentsService.query(input);
+    case "action.devices.EXECUTE":
+      return IntentsService.execute(input);
   }
 }
 
